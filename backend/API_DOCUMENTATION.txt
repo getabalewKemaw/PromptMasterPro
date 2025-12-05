@@ -1,0 +1,148 @@
+# PromptMaster Pro API Documentation
+
+## Base URL
+http://localhost:3000/api
+
+## Authentication
+Most endpoints require a JWT token. Include it in the Authorization header:
+Authorization: Bearer <your_jwt_token>
+
+---
+
+## Rate Limiting
+- General API: 100 requests per 15 minutes
+- Authentication: 5 requests per 15 minutes
+- AI Generation: 20 requests per 15 minutes
+
+---
+
+## AUTHENTICATION ENDPOINTS
+
+### Register User
+POST /api/auth/register
+
+Request Body:
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "preferredLanguage": "en"
+}
+
+Validation Rules:
+- name: Required, 2-100 characters
+- email: Required, valid email format
+- password: Required, minimum 6 characters
+- preferredLanguage: Optional, one of: en, am, om, ti
+
+---
+
+### Login
+POST /api/auth/login
+
+Request Body:
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+---
+
+### Get Profile
+GET /api/auth/profile
+Headers: Authorization: Bearer <token>
+
+---
+
+## PROMPT ENDPOINTS
+
+### Create Prompt
+POST /api/prompts
+Headers: Authorization: Bearer <token>
+
+Request Body:
+{
+  "inputText": "Explain quantum computing",
+  "promptText": "Please explain quantum computing in simple terms",
+  "languageInput": "en",
+  "languageOutput": "en",
+  "category": "Education"
+}
+
+Validation Rules:
+- inputText: Required, max 5000 characters
+- promptText: Required, max 10000 characters
+- languageInput: Optional, one of: en, am, om, ti
+- languageOutput: Optional, one of: en, am, om, ti
+- category: Optional, max 50 characters
+
+---
+
+### Get User Prompts
+GET /api/prompts?category=Education&favorite=true&limit=10&offset=0
+Headers: Authorization: Bearer <token>
+
+Query Parameters:
+- category (optional): Filter by category
+- favorite (optional): Filter favorites (true/false)
+- limit (optional): Number of results (1-100, default: 50)
+- offset (optional): Pagination offset (default: 0)
+
+---
+
+### Get Prompt by ID
+GET /api/prompts/:id
+Headers: Authorization: Bearer <token>
+
+---
+
+### Delete Prompt
+DELETE /api/prompts/:id
+Headers: Authorization: Bearer <token>
+
+---
+
+### Toggle Favorite
+PATCH /api/prompts/:id/favorite
+Headers: Authorization: Bearer <token>
+
+---
+
+## TEMPLATE ENDPOINTS
+
+### Get All Templates
+GET /api/templates
+
+---
+
+### Get Templates by Category
+GET /api/templates/category/:category
+Example: GET /api/templates/category/Education
+
+---
+
+### Get Template by ID
+GET /api/templates/:id
+
+---
+
+## ERROR RESPONSES
+
+400 - Validation Error
+401 - Unauthorized
+404 - Not Found
+429 - Rate Limit Exceeded
+500 - Server Error
+
+---
+
+## SUPPORTED LANGUAGES
+- en - English
+- am - Amharic
+- om - Oromo
+- ti - Tigrinya
+
+---
+
+## HEALTH CHECK
+GET /health

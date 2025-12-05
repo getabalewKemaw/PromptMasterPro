@@ -1,0 +1,95 @@
+===========================================
+QUICK START - DATABASE SETUP
+===========================================
+
+OPTION 1: Use Free Cloud Database (Recommended)
+-----------------------------------------------
+1. Go to https://neon.tech
+2. Sign up for free account
+3. Create a new project
+4. Copy the connection string
+5. Paste it in .env as DATABASE_URL
+6. Run: setup-database.bat
+
+OPTION 2: Use Local PostgreSQL
+-----------------------------------------------
+1. Install PostgreSQL
+2. Create database:
+   psql -U postgres
+   CREATE DATABASE promptmasterpro;
+   \q
+
+3. Update .env:
+   DATABASE_URL="postgresql://postgres:password@localhost:5432/promptmasterpro?schema=public"
+
+4. Run: setup-database.bat
+
+===========================================
+REQUIRED ENVIRONMENT VARIABLES
+===========================================
+
+Copy .env.example to .env and fill in:
+
+DATABASE_URL=your_database_connection_string
+OPENAI_API_KEY=sk-your-openai-key
+JWT_SECRET=any-random-long-string
+PORT=3000
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:8081
+
+===========================================
+SETUP COMMANDS
+===========================================
+
+Automated Setup:
+  setup-database.bat
+
+Manual Setup:
+  npx prisma generate
+  npx prisma migrate dev --name init
+  npm run prisma:seed
+
+Start Server:
+  npm run dev
+
+View Database:
+  npm run prisma:studio
+
+===========================================
+TESTING WITH POSTMAN
+===========================================
+
+1. Import: PromptMasterPro.postman_collection.json
+2. Run: Health Check
+3. Run: Register User (saves token automatically)
+4. Run: Get All Templates
+5. Run: Create Prompt (needs OpenAI key)
+6. Run: Get User Prompts
+
+===========================================
+TROUBLESHOOTING
+===========================================
+
+Error: Can't reach database
+  → Check if PostgreSQL is running
+  → Verify DATABASE_URL in .env
+
+Error: Invalid API key
+  → Check OPENAI_API_KEY in .env
+  → Verify key is active
+
+Error: Port already in use
+  → Change PORT in .env
+  → Or kill process on port 3000
+
+===========================================
+NEXT STEPS
+===========================================
+
+1. ✓ Setup database
+2. ✓ Test with Postman
+3. → Build mobile app
+4. → Connect mobile app to API
+5. → Deploy to production
+
+===========================================

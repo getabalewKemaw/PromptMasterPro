@@ -7,16 +7,23 @@ import {
     toggleFavorite,
 } from '../controllers/prompt.controller';
 import { authenticate } from '../middleware/auth';
+import { aiLimiter } from '../middleware/rateLimiter';
+import { validate } from '../middleware/validator';
+import {
+    createPromptValidation,
+    promptIdValidation,
+    getUserPromptsValidation,
+} from '../middleware/validationRules';
 
 const router = Router();
 
 // All prompt routes require authentication
 router.use(authenticate);
 
-router.post('/', createPrompt);
-router.get('/', getUserPrompts);
-router.get('/:id', getPromptById);
-router.delete('/:id', deletePrompt);
-router.patch('/:id/favorite', toggleFavorite);
+router.post('/', aiLimiter, createPromptValidation, validate, createPrompt);
+router.get('/', getUserPromptsValidation, validate, getUserPrompts);
+router.get('/:id', promptIdValidation, validate, getPromptById);
+router.delete('/:id', promptIdValidation, validate, deletePrompt);
+router.patch('/:id/favorite', promptIdValidation, validate, toggleFavorite);
 
 export default router;
