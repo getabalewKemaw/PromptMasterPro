@@ -1,0 +1,68 @@
+# 📱 PromptMaster Pro - Mobile App Vision
+
+## 🌟 Core Philosophy
+**"Empowering Local Voices with Global AI"**
+The app must feel native, fast, and magical. It shouldn't feel like a "translation tool" but like a "super-smart assistant that speaks your language."
+
+---
+
+## 🎨 Design Language (The "Premium" Look)
+- **Theme**: Modern, clean, with subtle Ethiopian/African design accents (patterns or colors).
+- **Typography**: High-readability fonts that support Ethiopic script (Amharic/Tigrinya) beautifully.
+- **Animations**: Smooth transitions between screens. No "janky" loading states.
+- **Dark Mode**: Fully supported for night-time usage.
+
+---
+
+## 🚀 Key Features Breakdown
+
+### 1. Onboarding (The Hook)
+- **Language Selection**: First screen asks "What language do you speak?" (Amharic, Oromo, Tigrinya, English).
+- **Quick Demo**: Show a 3-second animation of "Amharic Input -> AI Magic -> Amharic Output".
+
+### 2. The "Create" Tab (Main Screen)
+- **Simple Input**: Large text area.
+- **"Magic Wand" Button**: The "Improve Prompt" feature. User types "Coffee", taps wand -> App suggests "Write a detailed history of Ethiopian Coffee ceremonies".
+- **Language Toggle**: Quick switch between input/output languages.
+
+### 3. The "Chat" Interface
+- **Bubble Design**: Distinct colors for User (Right) and AI (Left).
+- **Translation Toggle**: A small icon on every AI message to toggle between [Local Language] <-> [English].
+- **Action Bar**: Copy, Share, Favorite, Regenerate.
+
+### 4. Template Library
+- **Card Layout**: Grid of cards with icons (e.g., 🎓 Education, 💼 Business).
+- **Smart Forms**: Clicking a template opens a form, not just a text box.
+  - *Example*: "Job Application" Template -> Asks for [Job Title], [Company Name], [Your Experience].
+
+### 5. Profile & History
+- **Searchable History**: "What was that poem I wrote last week?"
+- **Favorites**: Quick access to best prompts.
+- **Usage Stats**: "You have generated 50 prompts this week!"
+
+---
+
+## 🛠️ Tech Stack Recommendations
+
+| Component | Technology | Why? |
+|-----------|------------|------|
+| **Framework** | React Native (Expo) | Fast dev, cross-platform, OTA updates |
+| **Styling** | NativeWind (Tailwind) | Beautiful UI, easy dark mode |
+| **Icons** | Lucide React Native | Clean, modern SVG icons |
+| **Navigation** | Expo Router | File-based routing (like Next.js) |
+| **State** | Zustand | Simple, lightweight global state |
+| **Storage** | MMKV | Fastest mobile storage for caching |
+| **API Client** | TanStack Query | Handles caching, loading states, retries |
+
+---
+
+## 📅 Next Steps (When We Resume)
+
+1.  **Initialize Expo Project**: Set up the folder structure.
+2.  **Configure NativeWind**: Get the styling system ready.
+3.  **Build Authentication**: Login/Register screens connected to our Backend.
+4.  **Build Home Screen**: The main prompt interface.
+5.  **Connect AI**: Hook up the `POST /api/prompts` endpoint.
+
+---
+**Ready to build the future of multilingual AI? 🚀**

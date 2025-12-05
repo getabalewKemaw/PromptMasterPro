@@ -108,6 +108,29 @@ Headers: Authorization: Bearer <token>
 
 ---
 
+### Improve Prompt
+POST /api/prompts/improve
+Headers: Authorization: Bearer <token>
+
+Request Body:
+{
+  "promptText": "ስለ ቡና ጻፍ", 
+  "language": "am"
+}
+
+Response:
+{
+  "status": "success",
+  "data": {
+    "originalInput": "ስለ ቡና ጻፍ",
+    "improvedEnglish": "Write a detailed article about the history, cultural significance, and preparation ceremony of Ethiopian coffee.",
+    "improvedLocal": "ስለ ኢትዮጵያ ቡና ታሪክ፣ ባህላዊ ጠቀሜታ እና የአፈላል ሥነ-ሥርዓት ዝርዝር ጽሑፍ ጻፍ።",
+    "language": "am"
+  }
+}
+
+---
+
 ## TEMPLATE ENDPOINTS
 
 ### Get All Templates

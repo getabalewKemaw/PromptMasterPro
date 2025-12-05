@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
-import { generatePromptWithGPT } from '../services/openai.service';
+import { generatePromptWithGemini, improvePromptWithGemini, transcribeAudioWithGemini } from '../services/gemini.service';
 import { translateText } from '../services/hasab.service';
 
 const prisma = new PrismaClient();
@@ -33,8 +33,8 @@ export const createPrompt = async (
             promptText = translatedInput;
         }
 
-        // Step 2: Generate AI response using GPT
-        const gptOutput = await generatePromptWithGPT(promptText);
+        // Step 2: Generate AI response using GPT (now Gemini)
+        const gptOutput = await generatePromptWithGemini(promptText);
 
         // Step 3: Translate output back to user's language if needed
         let translatedOutput = gptOutput;
@@ -210,6 +210,97 @@ export const toggleFavorite = async (
             status: 'success',
             data: { prompt: updatedPrompt },
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const improvePromptText = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    // ... existing code ...
+    try {
+        const { promptText, language = 'en' } = req.body;
+        // ... (keep existing logic) ...
+        if (!promptText) {
+            throw new AppError('Prompt text is required', 400);
+        }
+
+        // Step 1: Translate to English if needed
+        let englishInput = promptText;
+        if (language !== 'en') {
+            englishInput = await translateText(promptText, language, 'en');
+        }
+
+        // Step 2: Improve the prompt using AI (in English)
+        const improvedEnglishPrompt = await improvePromptWithGemini(englishInput);
+
+        // Step 3: Translate back to original language if needed
+        let improvedLocalPrompt = improvedEnglishPrompt;
+        if (language !== 'en') {
+            improvedLocalPrompt = await translateText(improvedEnglishPrompt, 'en', language);
+        }
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                originalInput: promptText,
+                improvedEnglish: improvedEnglishPrompt,
+                improvedLocal: language !== 'en' ? improvedLocalPrompt : null,
+                language: language
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const processVoicePrompt = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        if (!req.file) {
+            throw new AppError('No audio file provided', 400);
+        }
+
+        const language = req.body.language || 'en';
+        const filePath = req.file.path;
+
+        // Step 1: Transcribe Audio
+        const transcribedText = await transcribeAudioWithGemini(filePath);
+
+        // Step 2: Run the existing improvement flow
+        // (Duplicate logic for now, or refactor later)
+
+        let englishInput = transcribedText;
+        if (language !== 'en') {
+            englishInput = await translateText(transcribedText, language, 'en');
+        }
+
+        const improvedEnglishPrompt = await improvePromptWithGemini(englishInput);
+
+        let improvedLocalPrompt = improvedEnglishPrompt;
+        if (language !== 'en') {
+            improvedLocalPrompt = await translateText(improvedEnglishPrompt, 'en', language);
+        }
+
+        // Clean up file
+        // fs.unlinkSync(filePath); // Optional: delete after processing
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                originalInput: transcribedText,
+                improvedEnglish: improvedEnglishPrompt,
+                improvedLocal: language !== 'en' ? improvedLocalPrompt : null,
+                language: language
+            },
+        });
+
     } catch (error) {
         next(error);
     }
