@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { AppError } from '../middleware/errorHandler';
 
-const HASAB_API_URL = 'https://api.hasab.ai/v1/translate';
+const HASAB_API_URL = 'https://hasab.co/api/v1/translate';
+
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// ... (keep existing imports)
 
 export const translateText = async (
     text: string,
@@ -11,54 +15,41 @@ export const translateText = async (
     try {
         const apiKey = process.env.HASAB_API_KEY;
 
-        if (!apiKey) {
-            throw new AppError('Hasab API key not configured', 500);
-        }
+        // Validation for Hasab Key
+        if (!apiKey) throw new Error('Hasab API Key missing');
 
-        // If source and target are the same, return original text
-        if (sourceLang === targetLang) {
-            return text;
-        }
+        // ... (Try Hasab Logic) ... 
+        // If Hasab fails (which it is doing now), we enter catch block.
+        // But wait, the current logic returns original text.
+        // I will change it to return Gemini Translation.
 
+        // ... (Keep existing Hasab Axios call) ...
         const response = await axios.post(
             HASAB_API_URL,
-            {
-                text,
-                source_language: sourceLang,
-                target_language: targetLang,
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json',
-                },
-                timeout: 10000, // 10 second timeout
-            }
+            { text, source_language: sourceLang, target_language: targetLang },
+            { headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, timeout: 5000 }
         );
 
-        const translatedText = response.data?.translated_text || response.data?.translation;
+        return response.data?.translated_text || response.data?.translation || text;
 
-        if (!translatedText) {
-            console.error('Hasab API response:', response.data);
-            throw new AppError('Translation failed - no text returned', 500);
-        }
-
-        return translatedText;
     } catch (error: any) {
-        console.error('Hasab Translation Error:', error.message);
+        console.warn('Hasab API Failed, falling back to Gemini:', error.message);
 
-        // If Hasab API fails, return original text as fallback
-        // This ensures the app doesn't break if translation service is down
-        if (error.response?.status === 401) {
-            console.warn('Invalid Hasab API key - returning original text');
-        } else if (error.code === 'ECONNABORTED') {
-            console.warn('Hasab API timeout - returning original text');
-        } else {
-            console.warn('Hasab API error - returning original text');
+        // Fallback: Use Gemini for translation
+        try {
+            const geminiKey = process.env.GEMINI_API_KEY || process.env.GEMENI_API_KEY;
+            if (!geminiKey) return text; // Give up if no keys at all
+
+            const genAI = new GoogleGenerativeAI(geminiKey.trim());
+            const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+            const prompt = `Translate the following text from ${sourceLang} to ${targetLang}. Return ONLY the translated text. Text: "${text}"`;
+            const result = await model.generateContent(prompt);
+            return result.response.text().trim();
+        } catch (geminiError) {
+            console.error('Gemini Fallback Failed:', geminiError);
+            return text;
         }
-
-        // Return original text as fallback
-        return text;
     }
 };
 
