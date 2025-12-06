@@ -235,20 +235,31 @@ export const improvePromptText = async (
         }
 
         // Step 2: Improve the prompt using AI (in English)
-        const improvedEnglishPrompt = await improvePromptWithGemini(englishInput);
+        const improvementResult = await improvePromptWithGemini(englishInput);
+        const { critique, improvedPrompt } = improvementResult;
 
         // Step 3: Translate back to original language if needed
-        let improvedLocalPrompt = improvedEnglishPrompt;
+        let improvedLocalPrompt = improvedPrompt;
+        let localCritique = critique;
+
         if (language !== 'en') {
-            improvedLocalPrompt = await translateText(improvedEnglishPrompt, 'en', language);
+            // Parallel translation for speed
+            const [translatedPrompt, translatedCritique] = await Promise.all([
+                translateText(improvedPrompt, 'en', language),
+                translateText(critique, 'en', language)
+            ]);
+            improvedLocalPrompt = translatedPrompt;
+            localCritique = translatedCritique;
         }
 
         res.status(200).json({
             status: 'success',
             data: {
                 originalInput: promptText,
-                improvedEnglish: improvedEnglishPrompt,
+                improvedEnglish: improvedPrompt,
+                englishCritique: critique,
                 improvedLocal: language !== 'en' ? improvedLocalPrompt : null,
+                localCritique: language !== 'en' ? localCritique : null,
                 language: language
             },
         });
@@ -274,18 +285,24 @@ export const processVoicePrompt = async (
         const transcribedText = await transcribeAudioWithGemini(filePath);
 
         // Step 2: Run the existing improvement flow
-        // (Duplicate logic for now, or refactor later)
-
         let englishInput = transcribedText;
         if (language !== 'en') {
             englishInput = await translateText(transcribedText, language, 'en');
         }
 
-        const improvedEnglishPrompt = await improvePromptWithGemini(englishInput);
+        const improvementResult = await improvePromptWithGemini(englishInput);
+        const { critique, improvedPrompt } = improvementResult;
 
-        let improvedLocalPrompt = improvedEnglishPrompt;
+        let improvedLocalPrompt = improvedPrompt;
+        let localCritique = critique;
+
         if (language !== 'en') {
-            improvedLocalPrompt = await translateText(improvedEnglishPrompt, 'en', language);
+            const [translatedPrompt, translatedCritique] = await Promise.all([
+                translateText(improvedPrompt, 'en', language),
+                translateText(critique, 'en', language)
+            ]);
+            improvedLocalPrompt = translatedPrompt;
+            localCritique = translatedCritique;
         }
 
         // Clean up file
@@ -295,8 +312,10 @@ export const processVoicePrompt = async (
             status: 'success',
             data: {
                 originalInput: transcribedText,
-                improvedEnglish: improvedEnglishPrompt,
+                improvedEnglish: improvedPrompt,
+                englishCritique: critique,
                 improvedLocal: language !== 'en' ? improvedLocalPrompt : null,
+                localCritique: language !== 'en' ? localCritique : null,
                 language: language
             },
         });

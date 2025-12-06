@@ -1,0 +1,139 @@
+PromptMaster Pro - Postman Verification Guide
+=============================================
+
+This guide contains the endpoints and payloads to verify the core functionality of PromptMaster Pro.
+
+Base URL: http://localhost:3000/api
+
+--------------------------------------------------------------------------------
+1. User Signup
+--------------------------------------------------------------------------------
+Endpoint: POST /auth/register
+Description: Create a new user account.
+
+Body (JSON):
+{
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "Password123!",
+    "preferredLanguage": "en"
+}
+
+Expected Response (201 Created):
+{
+    "status": "success",
+    "data": {
+        "user": { ... },
+        "token": "eyJhbGciOi..."  <-- SAVE THIS TOKEN
+    }
+}
+
+--------------------------------------------------------------------------------
+2. User Login
+--------------------------------------------------------------------------------
+Endpoint: POST /auth/login
+Description: Login to get a JWT token if you lost the previous one.
+
+Body (JSON):
+{
+    "email": "test@example.com",
+    "password": "Password123!"
+}
+
+Expected Response (200 OK):
+{
+    "status": "success",
+    "data": {
+        "token": "..." <-- USE THIS FOR ALL REQUESTS BELOW
+    }
+}
+
+*NOTE*: For all following requests, add the Header:
+Authorization: Bearer <YOUR_TOKEN_HERE>
+
+--------------------------------------------------------------------------------
+3. Improve English Prompt (Standard)
+--------------------------------------------------------------------------------
+Endpoint: POST /prompts/improve
+Description: Send an English prompt and get a critique + improved version.
+
+Body (JSON):
+{
+    "promptText": "make me a email for boss asking for raise",
+    "language": "en"
+}
+
+Expected Response (200 OK):
+{
+    "status": "success",
+    "data": {
+        "originalInput": "make me a email for boss asking for raise",
+        "improvedEnglish": "Subject: Request for Salary Review...",
+        "englishCritique": "The original prompt was too vague. The improved prompt specifies tone, context...",
+        "language": "en"
+    }
+}
+
+--------------------------------------------------------------------------------
+4. Improve Multilingual Prompt (Amharic Example)
+--------------------------------------------------------------------------------
+Endpoint: POST /prompts/improve
+Description: Send a prompt in Amharic (or Tigrinya, Oromiffa). The system will translate, improve, and translate back.
+
+Body (JSON):
+{
+    "promptText": "ስለ ኢትዮጵያ ታሪክ ንገረኝ",
+    "language": "am"
+}
+
+Expected Response (200 OK):
+{
+    "status": "success",
+    "data": {
+        "originalInput": "ስለ ኢትዮጵያ ታሪክ ንገረኝ",
+        "improvedEnglish": "Write a comprehensive summary of Ethiopian history...",
+        "englishCritique": "The original prompt was too general...",
+        "improvedLocal": "የኢትዮጵያን ታሪክ አጠቃላይ ማጠቃለያ ጻፍ...",  <-- Improved prompt in Amharic
+        "localCritique": "መጀመሪያ የነበረው ትዕዛዝ በጣም ጠቅላላ ነበር...", <-- Critique in Amharic
+        "language": "am"
+    }
+}
+
+Supported Language Codes:
+- am: Amharic
+- ti: Tigrinya
+- om: Afaan Oromo
+- en: English
+
+--------------------------------------------------------------------------------
+5. Voice Prompt (Upload & Transcribe)
+--------------------------------------------------------------------------------
+Endpoint: POST /prompts/improve-voice
+Description: Upload an audio file (mp3, m4a, wav). The system transcribes, improves, and returns the result.
+
+Headers:
+Content-Type: multipart/form-data
+Authorization: Bearer <TOKEN>
+
+Body (Form-Data):
+- key: audio (File) -> Select your voice file
+- key: language (Text) -> "en" (or "am", "ti", etc. if the speech is in that language)
+
+Expected Response (200 OK):
+{
+    "status": "success",
+    "data": {
+        "originalInput": "Transcribed text from your audio...",
+        "improvedEnglish": "...",
+        "englishCritique": "...",
+        "improvedLocal": "..." (if language != en),
+        "language": "..."
+    }
+}
+
+--------------------------------------------------------------------------------
+Troubleshooting
+--------------------------------------------------------------------------------
+- If you get "Translate failed", ensure HASAB_API_KEY is in .env.
+- If you get "Gemini Error", ensure GEMINI_API_KEY (or GEMENI_API_KEY) is in .env.
+- Verify your server is running with: npm run dev

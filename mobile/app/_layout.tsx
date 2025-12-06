@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 import { useEffect } from 'react';
 import { useColorScheme } from 'nativewind';
 import { useAuthStore } from '../src/store/authStore';
-import './globals.css'; // Import global css for NativeWind
+import '../global.css'; // Import global css for NativeWind
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
