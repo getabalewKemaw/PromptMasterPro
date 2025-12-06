@@ -15,12 +15,11 @@ export const register = async (
     try {
         const { name, email, password, preferredLanguage } = req.body;
 
-        // Validation
         if (!name || !email || !password) {
             throw new AppError('Name, email, and password are required', 400);
         }
 
-        // Check if user exists
+       
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
@@ -29,10 +28,9 @@ export const register = async (
             throw new AppError('User with this email already exists', 409);
         }
 
-        // Hash password
+       
         const passwordHash = await bcrypt.hash(password, 10);
 
-        // Create user
         const user = await prisma.user.create({
             data: {
                 name,
@@ -79,7 +77,6 @@ export const login = async (
     try {
         const { email, password } = req.body;
 
-        // Validation
         if (!email || !password) {
             throw new AppError('Email and password are required', 400);
         }

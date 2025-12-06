@@ -33,7 +33,7 @@ module.exports = {
         },
         background: {
           light: '#F9FAFB',
-          dark: '#111827',
+          dark: '#0C1A2B',
         },
         surface: {
           light: '#FFFFFF',
