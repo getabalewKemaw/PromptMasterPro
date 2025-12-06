@@ -2,7 +2,6 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 import { Sparkles, User } from 'lucide-react-native'; // Changed Home to Sparkles for Create, Compass to User for Profile
-
 import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -28,7 +27,7 @@ export default function TabLayout() {
             borderTopWidth: 0,
             elevation: 0,
             height: 60,
-            paddingBottom: 10,
+            paddingBottom: 20,
           },
         }),
       }}>
@@ -39,7 +38,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Sparkles size={24} color={color} />,
         }}
       />
-      {/* Replaced Explore with Profile */}
+      {/* Profile */}
       <Tabs.Screen
         name="profile"
         options={{
@@ -48,13 +47,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Hide the old explore route if file still exists until deleted */}
-      <Tabs.Screen
-        name="explore"
-        options={{
-          href: null,
-        }}
-      />
     </Tabs>
   );
 }

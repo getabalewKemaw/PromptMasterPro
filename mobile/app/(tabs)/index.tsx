@@ -31,7 +31,7 @@ export default function HomeScreen() {
         recording.stopAndUnloadAsync();
       }
     };
-  }, []);
+  }, [recording]);
 
   const startRecording = async () => {
     try {
@@ -139,7 +139,7 @@ export default function HomeScreen() {
 
             {/* Profile Icon (Clickable) */}
             <TouchableOpacity
-              onPress={() => router.push('/(tabs)/profile')}
+              onPress={() => router.push('/profile')}
               className="rounded-full shadow-lg shadow-black/50"
             >
               <View className="w-12 h-12 bg-gray-700 rounded-full items-center justify-center border border-gray-600">
@@ -179,7 +179,7 @@ export default function HomeScreen() {
               value={prompt}
               onChangeText={setPrompt}
               multiline
-              numberOfLines={4}
+              numberOfLines={7}
               className="h-32 text-lg text-white bg-transparent border-0 pb-12"
               textAlignVertical="top"
             />
@@ -249,7 +249,7 @@ export default function HomeScreen() {
 
               {/* Local Result */}
               {result.improvedLocal && language !== 'en' && (
-                <View className="bg-surface-dark p-5 rounded-2xl border border-secondary-900/50">
+                <View className="bg-surface-dark p-5 rounded-2xl border border-secondary-900/50  ">
                   <View className="flex-row justify-between items-center mb-3">
                     <Text className="text-secondary-400 font-bold text-lg">
                       {languages.find(l => l.code === language)?.flag} {languages.find(l => l.code === language)?.label} Version

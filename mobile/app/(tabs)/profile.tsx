@@ -58,7 +58,7 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
 
                     {/* Item */}
-                    <TouchableOpacity className="flex-row items-center justify-between bg-surface-dark p-4 rounded-2xl border border-gray-800">
+                    <TouchableOpacity className="flex-row items-center justify-between bg-surface-dark p-4 rounded-2xl border border-gray-800  mt-5">
                         <View className="flex-row items-center gap-4">
                             <View className="bg-green-500/10 p-2 rounded-lg">
                                 <Globe size={20} color="#22C55E" />

@@ -27,14 +27,14 @@ export default function WelcomeScreen() {
                 </View>
 
                 {/* Features Grid */}
-                <View className="gap-6">
+                <View className="gap-6 pt-4">
                     <View className="flex-row items-center gap-4 bg-surface-dark/50 p-4 rounded-xl border border-gray-800">
                         <View className="bg-blue-500/20 p-3 rounded-lg">
                             <Globe size={24} color="#3B82F6" />
                         </View>
                         <View className="flex-1">
                             <Text className="text-white font-semibold text-lg">Multilingual AI</Text>
-                            <Text className="text-gray-400 text-sm">Amharic, Afaan Oromo, Tigrinya & more.</Text>
+                            <Text className="text-gray-400 text-sm">Amharic, Afaan Oromo, Tigrinya & more....</Text>
                         </View>
                     </View>
 
@@ -60,9 +60,9 @@ export default function WelcomeScreen() {
                 </View>
 
                 {/* Actions */}
-                <View className="gap-4 mb-4">
+                <View className="gap-4 mb-7 pt-2">
                     <TouchableOpacity
-                        onPress={() => router.push('/(auth)/register')}
+                        onPress={() => router.push('/register')}
                         className="bg-primary-600 p-4 rounded-2xl flex-row justify-center items-center shadow-lg shadow-primary-500/20"
                     >
                         <Text className="text-white font-bold text-lg mr-2">Get Started</Text>
@@ -70,7 +70,7 @@ export default function WelcomeScreen() {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={() => router.push('/(auth)/login')}
+                        onPress={() => router.push('/login')}
                         className="p-4 rounded-2xl flex-row justify-center items-center border border-gray-700 bg-surface-dark"
                     >
                         <Text className="text-white font-semibold text-lg">I already have an account</Text>
