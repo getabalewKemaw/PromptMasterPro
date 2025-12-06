@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Link } from 'expo-router';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInUp, FadeInDown } from 'react-native-reanimated';
 import { Button } from '../../src/components/ui/Button';
 import { Input } from '../../src/components/ui/Input';
 import { useAuthStore } from '../../src/store/authStore';
@@ -14,7 +14,7 @@ export default function RegisterScreen() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [language, setLanguage] = useState('en');
+    const [preferredLanguage, setPreferredLanguage] = useState('en');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleRegister = async () => {
@@ -29,9 +29,10 @@ export default function RegisterScreen() {
                 name,
                 email,
                 password,
-                preferredLanguage: language,
+                preferredLanguage
             });
 
+            // Auto login after register
             const { user, token } = response.data.data;
             login(user, token);
             router.replace('/(tabs)');
@@ -44,87 +45,97 @@ export default function RegisterScreen() {
     };
 
     const languages = [
-        { code: 'en', label: 'English 🇺🇸' },
-        { code: 'am', label: 'Amharic 🇪🇹' },
-        { code: 'om', label: 'Oromo 🌳' },
-        { code: 'ti', label: 'Tigrinya ⛰️' },
+        { code: 'en', label: 'English' },
+        { code: 'am', label: 'Amharic' },
+        { code: 'om', label: 'Oromo' },
+        { code: 'ti', label: 'Tigrinya' },
     ];
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
-            <ScrollView contentContainerStyle={{ padding: 24, flexGrow: 1, justifyContent: 'center' }}>
-                <Animated.View entering={FadeInUp.delay(200).duration(1000).springify()}>
-                    <Text className="text-4xl font-bold text-primary-600 mb-2">Create Account</Text>
-                    <Text className="text-gray-500 text-lg mb-8">
-                        Join the community of prompt masters.
-                    </Text>
-                </Animated.View>
+        <SafeAreaView className="flex-1 bg-background-dark">
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                className="flex-1"
+            >
+                <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 50, justifyContent: 'center', minHeight: '100%' }}>
+                    {/* ... (existing content) ... */}
+                    <Animated.View entering={FadeInUp.delay(200).duration(1000).springify()}>
+                        <Text className="text-4xl font-bold text-white mb-2">Create Account</Text>
+                        <Text className="text-gray-400 text-lg mb-8">
+                            Join PromptMaster Pro today.
+                        </Text>
+                    </Animated.View>
 
-                <Animated.View entering={FadeInDown.delay(400).duration(1000).springify()}>
-                    <Input
-                        label="Full Name"
-                        placeholder="John Doe"
-                        value={name}
-                        onChangeText={setName}
-                    />
-                    <Input
-                        label="Email"
-                        placeholder="john@example.com"
-                        value={email}
-                        onChangeText={setEmail}
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                    />
-                    <Input
-                        label="Password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                    />
+                    <Animated.View entering={FadeInDown.delay(400).duration(1000).springify()}>
+                        <Input
+                            label="Full Name"
+                            placeholder="John Doe"
+                            placeholderTextColor="#6B7280"
+                            value={name}
+                            onChangeText={setName}
+                            containerClassName="mb-4"
+                            className="bg-gray-800 border-gray-700 text-white"
+                        />
+                        <Input
+                            label="Email"
+                            placeholder="john@example.com"
+                            placeholderTextColor="#6B7280"
+                            value={email}
+                            onChangeText={setEmail}
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            containerClassName="mb-4"
+                            className="bg-gray-800 border-gray-700 text-white"
+                        />
+                        <Input
+                            label="Password"
+                            placeholder="••••••••"
+                            placeholderTextColor="#6B7280"
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                            containerClassName="mb-6"
+                            className="bg-gray-800 border-gray-700 text-white"
+                        />
 
-                    <Text className="text-gray-700 font-medium mb-2 ml-1">Preferred Language</Text>
-                    <View className="flex-row flex-wrap gap-2 mb-6">
-                        {languages.map((lang) => (
-                            <TouchableOpacity
-                                key={lang.code}
-                                onPress={() => setLanguage(lang.code)}
-                                className={`px-4 py-2 rounded-full border ${language === lang.code
-                                        ? 'bg-primary-50 border-primary-500'
-                                        : 'bg-white border-gray-200'
-                                    }`}
-                            >
-                                <Text
-                                    className={
-                                        language === lang.code
-                                            ? 'text-primary-700 font-bold'
-                                            : 'text-gray-600'
-                                    }
+                        {/* Language Selector */}
+                        <Text className="text-gray-400 font-medium mb-2 ml-1">Preferred Language</Text>
+                        <View className="flex-row flex-wrap mb-8">
+                            {languages.map((lang) => (
+                                <TouchableOpacity
+                                    key={lang.code}
+                                    onPress={() => setPreferredLanguage(lang.code)}
+                                    className={`px-4 py-2 rounded-full mr-2 mb-2 border ${preferredLanguage === lang.code
+                                        ? 'bg-primary-600 border-primary-600'
+                                        : 'bg-gray-800 border-gray-700'
+                                        }`}
                                 >
-                                    {lang.label}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                                    <Text className={`${preferredLanguage === lang.code ? 'text-white' : 'text-gray-400'} font-medium`}>
+                                        {lang.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
 
-                    <Button
-                        title="Sign Up"
-                        onPress={handleRegister}
-                        isLoading={isLoading}
-                        size="lg"
-                        className="mb-6 shadow-lg shadow-primary-500/30"
-                    />
+                        <Button
+                            title="Create Account"
+                            onPress={handleRegister}
+                            isLoading={isLoading}
+                            size="lg"
+                            className="mb-6 shadow-lg shadow-primary-500/30 rounded-2xl"
+                        />
 
-                    <View className="flex-row justify-center mb-8">
-                        <Text className="text-gray-500">Already have an account? </Text>
-                        <Link href="/login" asChild>
-                            <TouchableOpacity>
-                                <Text className="text-primary-600 font-bold">Sign In</Text>
-                            </TouchableOpacity>
-                        </Link>
-                    </View>
-                </Animated.View>
-            </ScrollView>
+                        <View className="flex-row justify-center">
+                            <Text className="text-gray-400">Already have an account? </Text>
+                            <Link href="/login" asChild>
+                                <TouchableOpacity>
+                                    <Text className="text-primary-500 font-bold">Sign In</Text>
+                                </TouchableOpacity>
+                            </Link>
+                        </View>
+                    </Animated.View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }

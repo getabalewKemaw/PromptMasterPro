@@ -27,7 +27,7 @@ export default function RootLayout() {
       // Redirect to the login page if not authenticated
       // Use setTimeout to ensure navigation happens after the component is mounted
       setTimeout(() => {
-        router.replace('/(auth)/login');
+        router.replace('/(auth)/welcome');
       }, 0);
     } else if (isAuthenticated && inAuthGroup) {
       // Redirect to the tabs page if authenticated
